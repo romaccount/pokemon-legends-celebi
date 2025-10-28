@@ -43,6 +43,9 @@
 #include "battle.h"
 
 static void Task_ExitNonAnimDoor(u8);
+static void Task_ExitNonAnimDoorNorth(u8);
+static void Task_ExitNonAnimDoorEast(u8);
+static void Task_ExitNonAnimDoorWest(u8);
 static void Task_ExitNonDoor(u8);
 static void Task_DoContestHallWarp(u8);
 static void FillPalBufferWhite(void);
@@ -280,6 +283,12 @@ static void SetUpWarpExitTask(void)
         func = Task_ExitStairs;
     else if (MetatileBehavior_IsNonAnimDoor(behavior) == TRUE)
         func = Task_ExitNonAnimDoor;
+    else if (MetatileBehavior_IsNonAnimDoorNorth(behavior) == TRUE)
+        func = Task_ExitNonAnimDoorNorth;
+    else if (MetatileBehavior_IsNonAnimDoorEast(behavior) == TRUE)
+        func = Task_ExitNonAnimDoorEast;
+    else if (MetatileBehavior_IsNonAnimDoorWest(behavior) == TRUE)
+        func = Task_ExitNonAnimDoorWest;
     else
         func = Task_ExitNonDoor;
 
@@ -418,6 +427,150 @@ static void Task_ExitNonAnimDoor(u8 taskId)
             if (!MetatileBehavior_IsDeepSouthWarp(MapGridGetMetatileBehaviorAt(x, y + 1)))
                 FollowerNPC_SetIndicatorToComeOutDoor();
             // TODO: Add specific follower door warp behavior for MB_DEEP_SOUTH_WARP.
+
+            FollowerNPC_WarpSetEnd();
+            UnfreezeObjectEvents();
+            task->tState = 3;
+        }
+        break;
+    case 3:
+        UnlockPlayerFieldControls();
+        DestroyTask(taskId);
+        break;
+    }
+}
+
+static void Task_ExitNonAnimDoorEast(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    s16 *x = &task->data[2];
+    s16 *y = &task->data[3];
+
+    switch (task->tState)
+    {
+    case 0:
+        HideNPCFollower();
+        SetPlayerVisibility(FALSE);
+        FreezeObjectEvents();
+        PlayerGetDestCoords(x, y);
+        task->tState = 1;
+        break;
+    case 1:
+        if (WaitForWeatherFadeIn())
+        {
+            u8 objEventId;
+            SetPlayerVisibility(TRUE);
+            objEventId = GetObjectEventIdByLocalIdAndMap(LOCALID_PLAYER, 0, 0);
+            // Move player east when exiting through east-facing door
+            ObjectEventSetHeldMovement(&gObjectEvents[objEventId], GetWalkNormalMovementAction(DIR_EAST));
+            task->tState = 2;
+        }
+        break;
+    case 2:
+        if (IsPlayerStandingStill())
+        {
+            s16 x, y;
+
+            PlayerGetDestCoords(&x, &y);
+            // Check for deep warp tile to the east
+            if (!MetatileBehavior_IsDeepSouthWarp(MapGridGetMetatileBehaviorAt(x + 1, y)))
+                FollowerNPC_SetIndicatorToComeOutDoor();
+
+            FollowerNPC_WarpSetEnd();
+            UnfreezeObjectEvents();
+            task->tState = 3;
+        }
+        break;
+    case 3:
+        UnlockPlayerFieldControls();
+        DestroyTask(taskId);
+        break;
+    }
+}
+
+static void Task_ExitNonAnimDoorWest(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    s16 *x = &task->data[2];
+    s16 *y = &task->data[3];
+
+    switch (task->tState)
+    {
+    case 0:
+        HideNPCFollower();
+        SetPlayerVisibility(FALSE);
+        FreezeObjectEvents();
+        PlayerGetDestCoords(x, y);
+        task->tState = 1;
+        break;
+    case 1:
+        if (WaitForWeatherFadeIn())
+        {
+            u8 objEventId;
+            SetPlayerVisibility(TRUE);
+            objEventId = GetObjectEventIdByLocalIdAndMap(LOCALID_PLAYER, 0, 0);
+            // Move player west when exiting through west-facing door
+            ObjectEventSetHeldMovement(&gObjectEvents[objEventId], GetWalkNormalMovementAction(DIR_WEST));
+            task->tState = 2;
+        }
+        break;
+    case 2:
+        if (IsPlayerStandingStill())
+        {
+            s16 x, y;
+
+            PlayerGetDestCoords(&x, &y);
+            // Check for deep warp tile to the west
+            if (!MetatileBehavior_IsDeepSouthWarp(MapGridGetMetatileBehaviorAt(x - 1, y)))
+                FollowerNPC_SetIndicatorToComeOutDoor();
+
+            FollowerNPC_WarpSetEnd();
+            UnfreezeObjectEvents();
+            task->tState = 3;
+        }
+        break;
+    case 3:
+        UnlockPlayerFieldControls();
+        DestroyTask(taskId);
+        break;
+    }
+}
+
+static void Task_ExitNonAnimDoorNorth(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    s16 *x = &task->data[2];
+    s16 *y = &task->data[3];
+
+    switch (task->tState)
+    {
+    case 0:
+        HideNPCFollower();
+        SetPlayerVisibility(FALSE);
+        FreezeObjectEvents();
+        PlayerGetDestCoords(x, y);
+        task->tState = 1;
+        break;
+    case 1:
+        if (WaitForWeatherFadeIn())
+        {
+            u8 objEventId;
+            SetPlayerVisibility(TRUE);
+            objEventId = GetObjectEventIdByLocalIdAndMap(LOCALID_PLAYER, 0, 0);
+            // Move player north when exiting through north-facing door
+            ObjectEventSetHeldMovement(&gObjectEvents[objEventId], GetWalkNormalMovementAction(DIR_NORTH));
+            task->tState = 2;
+        }
+        break;
+    case 2:
+        if (IsPlayerStandingStill())
+        {
+            s16 x, y;
+
+            PlayerGetDestCoords(&x, &y);
+            // Check for deep warp tile to the north
+            if (!MetatileBehavior_IsDeepSouthWarp(MapGridGetMetatileBehaviorAt(x, y - 1)))
+                FollowerNPC_SetIndicatorToComeOutDoor();
 
             FollowerNPC_WarpSetEnd();
             UnfreezeObjectEvents();
