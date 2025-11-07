@@ -839,5 +839,5 @@ const struct Tileset gTileset_CelebiPrimary =
     .palettes = gTilesetPalettes_CelebiPrimary,
     .metatiles = gMetatiles_CelebiPrimary,
     .metatileAttributes = gMetatileAttributes_CelebiPrimary,
-    .callback = NULL,
+    .callback = InitTilesetAnim_CelebiPrimaryWater,
 };

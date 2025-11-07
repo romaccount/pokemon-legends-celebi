@@ -24,8 +24,8 @@
       "dest_warp_id": "1"
     },
     {
-      "x": 0,
-      "y": 37,
+      "x": 5,
+      "y": 35,
       "elevation": 0,
       "dest_map": "MAP_STARTER_AREA_TEST",
       "dest_warp_id": "0"

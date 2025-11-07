@@ -549,6 +549,8 @@ static void Task_ExitNonAnimDoorNorth(u8 taskId)
         SetPlayerVisibility(FALSE);
         FreezeObjectEvents();
         PlayerGetDestCoords(x, y);
+        // For north doors, position player one tile above the warp tile
+        *y -= 1;
         task->tState = 1;
         break;
     case 1:
@@ -557,7 +559,7 @@ static void Task_ExitNonAnimDoorNorth(u8 taskId)
             u8 objEventId;
             SetPlayerVisibility(TRUE);
             objEventId = GetObjectEventIdByLocalIdAndMap(LOCALID_PLAYER, 0, 0);
-            // Move player north when exiting through north-facing door
+            // Move player north once from the adjusted position
             ObjectEventSetHeldMovement(&gObjectEvents[objEventId], GetWalkNormalMovementAction(DIR_NORTH));
             task->tState = 2;
         }

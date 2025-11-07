@@ -1186,3 +1186,45 @@ static void BlendAnimPalette_BattleDome_FloorLightsNoBlend(u16 timer)
             sSecondaryTilesetAnimCallback = NULL;
     }
 }
+
+// Custom animation code:
+
+const u16 gTilesetAnims_CelebiPrimaryWater_Frame0[] = INCBIN_U16("data/tilesets/primary/celebi_primary/anim/water/00.4bpp");
+const u16 gTilesetAnims_CelebiPrimaryWater_Frame1[] = INCBIN_U16("data/tilesets/primary/celebi_primary/anim/water/01.4bpp");
+const u16 gTilesetAnims_CelebiPrimaryWater_Frame2[] = INCBIN_U16("data/tilesets/primary/celebi_primary/anim/water/02.4bpp");
+const u16 gTilesetAnims_CelebiPrimaryWater_Frame3[] = INCBIN_U16("data/tilesets/primary/celebi_primary/anim/water/03.4bpp");
+const u16 gTilesetAnims_CelebiPrimaryWater_Frame4[] = INCBIN_U16("data/tilesets/primary/celebi_primary/anim/water/04.4bpp");
+const u16 gTilesetAnims_CelebiPrimaryWater_Frame5[] = INCBIN_U16("data/tilesets/primary/celebi_primary/anim/water/05.4bpp");
+const u16 gTilesetAnims_CelebiPrimaryWater_Frame6[] = INCBIN_U16("data/tilesets/primary/celebi_primary/anim/water/06.4bpp");
+const u16 gTilesetAnims_CelebiPrimaryWater_Frame7[] = INCBIN_U16("data/tilesets/primary/celebi_primary/anim/water/07.4bpp");
+
+const u16 *const gTilesetAnims_CelebiPrimaryWater[] = {
+    gTilesetAnims_CelebiPrimaryWater_Frame0,
+    gTilesetAnims_CelebiPrimaryWater_Frame1,
+    gTilesetAnims_CelebiPrimaryWater_Frame2,
+    gTilesetAnims_CelebiPrimaryWater_Frame3,
+    gTilesetAnims_CelebiPrimaryWater_Frame4,
+    gTilesetAnims_CelebiPrimaryWater_Frame5,
+    gTilesetAnims_CelebiPrimaryWater_Frame6,
+    gTilesetAnims_CelebiPrimaryWater_Frame7,
+};
+
+static void QueueAnimTiles_CelebiPrimaryWater(u16 timer)
+{
+    u16 i = timer % ARRAY_COUNT(gTilesetAnims_CelebiPrimaryWater);
+    AppendTilesetAnimToBuffer(gTilesetAnims_CelebiPrimaryWater[i], (u16 *)(BG_VRAM + TILE_OFFSET_4BPP(1)), 4 * TILE_SIZE_4BPP);
+}
+
+static void TilesetAnim_CelebiPrimaryWater(u16 timer)
+{
+    if (timer % 16 == 0) {
+        QueueAnimTiles_CelebiPrimaryWater(timer / 16);
+    }
+}
+
+void InitTilesetAnim_CelebiPrimaryWater(void)
+{
+    sPrimaryTilesetAnimCounter = 0;
+    sPrimaryTilesetAnimCounterMax = 256;
+    sPrimaryTilesetAnimCallback = TilesetAnim_CelebiPrimaryWater;
+}
